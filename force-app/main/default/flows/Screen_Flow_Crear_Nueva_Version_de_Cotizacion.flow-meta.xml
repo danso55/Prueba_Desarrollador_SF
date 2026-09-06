@@ -134,10 +134,10 @@
             <name>Opportunity</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>Origin</leftValueReference>
-                <operator>EqualTo</operator>
+                <leftValueReference>recordId</leftValueReference>
+                <operator>StartsWith</operator>
                 <rightValue>
-                    <stringValue>Opportunity</stringValue>
+                    <stringValue>006</stringValue>
                 </rightValue>
             </conditions>
             <connector>
@@ -149,10 +149,10 @@
             <name>Quote</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>Origin</leftValueReference>
-                <operator>EqualTo</operator>
+                <leftValueReference>recordId</leftValueReference>
+                <operator>StartsWith</operator>
                 <rightValue>
-                    <stringValue>Quote</stringValue>
+                    <stringValue>0Q0</stringValue>
                 </rightValue>
             </conditions>
             <connector>
@@ -184,6 +184,12 @@
         <name>Key</name>
         <dataType>String</dataType>
         <expression>{!Get_info_the_quote.OpportunityId} &amp;&quot;-&quot;&amp; TEXT({!Get_info_the_quote.Opportunity.Numero_de_versiones_de_presupuesto__c}+1)</expression>
+    </formulas>
+    <formulas>
+        <name>version</name>
+        <dataType>Number</dataType>
+        <expression>{!Get_info_the_quote.Opportunity.Numero_de_versiones_de_presupuesto__c}+1</expression>
+        <scale>0</scale>
     </formulas>
     <interviewLabel>Screen Flow - Crear Nueva Versión de Cotización {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Screen Flow - Crear Nueva Versión de Cotización</label>
@@ -254,7 +260,7 @@
         <locationX>0</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>SucessScreen</targetReference>
+            <targetReference>Chance</targetReference>
         </connector>
         <faultConnector>
             <targetReference>ErrorScreen</targetReference>
@@ -363,7 +369,7 @@
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
-            <field>VersionKey_c__c</field>
+            <field>VersionKey__c</field>
             <operator>EqualTo</operator>
             <value>
                 <elementReference>Key</elementReference>
@@ -373,6 +379,30 @@
         <object>Quote</object>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
+    <recordUpdates>
+        <name>Chance</name>
+        <label>Update Opp</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>SucessScreen</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>New_Quote.OpportunityId</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Numero_de_versiones_de_presupuesto__c</field>
+            <value>
+                <elementReference>version</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Opportunity</object>
+    </recordUpdates>
     <screens>
         <name>Duplicate_Create</name>
         <label>Duplicate/Create</label>
@@ -523,13 +553,6 @@
         <isInput>false</isInput>
         <isOutput>false</isOutput>
         <objectType>QuoteLineItem</objectType>
-    </variables>
-    <variables>
-        <name>Origin</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>true</isInput>
-        <isOutput>false</isOutput>
     </variables>
     <variables>
         <name>QuoteLineItemBucle</name>

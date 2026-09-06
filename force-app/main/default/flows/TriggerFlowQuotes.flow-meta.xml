@@ -15,7 +15,7 @@
             </value>
         </assignmentItems>
         <assignmentItems>
-            <assignToReference>$Record.VersionKey_c__c</assignToReference>
+            <assignToReference>$Record.VersionKey__c</assignToReference>
             <operator>Assign</operator>
             <value>
                 <elementReference>Uniquekey</elementReference>
@@ -33,7 +33,23 @@
     <formulas>
         <name>Name</name>
         <dataType>String</dataType>
-        <expression>{!$Record.Name} &amp;&quot;- Version &quot;&amp; TEXT({!$Record.Opportunity.Numero_de_versiones_de_presupuesto__c}+1)</expression>
+        <expression>IF(
+    {!$Record.Opportunity.Numero_de_versiones_de_presupuesto__c} + 1 &lt;= 1,
+
+    {!$Record.Name} &amp;
+    &quot; - Version &quot; &amp;
+    TEXT(
+        {!$Record.Opportunity.Numero_de_versiones_de_presupuesto__c} + 1
+    ),
+LEFT(
+            {!$Record.Name},
+            FIND(&quot; - Version&quot;, {!$Record.Name}) - 1
+        ) &amp;
+        &quot; - Version &quot; &amp;
+        TEXT(
+            {!$Record.Opportunity.Numero_de_versiones_de_presupuesto__c} + 1
+        )
+)</expression>
     </formulas>
     <formulas>
         <name>Uniquekey</name>

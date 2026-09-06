@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>VersionKey_c__c</fullName>
+    <fullName>VersionKey__c</fullName>
     <caseSensitive>false</caseSensitive>
     <externalId>false</externalId>
     <label>VersionKey</label>
