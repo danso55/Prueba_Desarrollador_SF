@@ -1,58 +1,47 @@
-# Salesforce DX Project
+# Prueba Tecnica
+## Authors
+- [@Daniel Jaimes](https://github.com/danso55)
+## HT-01 (Gobernanza y Transiciones de Estado)
+### Gestión de versiones
+• Responsable de identificar las diferentes versiones de una cotización.
 
-Salesforce DX is a development approach that brings source-driven development, team collaboration, and continuous integration to the Salesforce Platform. Instead of working directly in an org through a web browser, you work with metadata as source files in a local DX project, track changes in version control, and deploy through automated processes.
+• Cada cotización cuenta con un VersionKey__c, utilizado como identificador lógico de la versión la cual se llena desde un trigger flow.
 
-This project template gets you started with the tools and structure you need to build Salesforce applications using source control, scratch orgs, and the Salesforce CLI.
+• El VersionKey__c permite diferenciar las cotizaciones y mantener la relación lógica entre las versiones generadas y evitar la duplicidad.
 
-## Prerequisites
+• La creación y actualización de versiones permanece desacoplada del proceso de depuración.
 
-Before you start, make sure you have:
+### Proceso de depuración
+• Implementado mediante Scheduled Apex + Batch Apex.
 
-- **Salesforce CLI** - Download from [developer.salesforce.com/tools/salesforcecli](https://developer.salesforce.com/tools/salesforcecli). See [Install Salesforce CLI](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm) for details.
-- **VS Code with Salesforce Extension Pack** - See [Installation Instructions](https://developer.salesforce.com/docs/platform/sfvscode-extensions/guide/install.html) for details. Includes the Agentforce Vibes extension.
-- **A development org** - Sign up for a free Developer Edition org [here](https://developer.salesforce.com/signup).
-- **Dev Hub enabled** (optional, required to create scratch orgs) - You can enable Dev Hub in your development org under Setup > Dev Hub.  See [Provide Developers Access to Salesforce DX Tools](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_setup_dx_tools.htm).
+• El Scheduler ejecuta periódicamente el Batch.
 
-## Project Structure
+• El Batch identifica las cotizaciones que cumplen las condiciones de depuración.
 
-Your DX project follows this structure:
+• La eliminación se realiza mediante Database.delete(records, false), permitiendo procesar individualmente los resultados y evitar que el fallo de un registro impida el procesamiento de los demás.
 
-- **`force-app/main/default/`** - Your metadata source files live in this default package directory. You can configure additional package directories in the `sfdx-project.json` file.
-- **`config/`** - Scratch org definitions and project settings
-- **`scripts/`** - Automation scripts for common tasks
-- **`sfdx-project.json`** - Project manifest that defines package directories, namespace, API version, and other project-level settings
+• Los errores y resultados del proceso son registrados en Audit_Log__c.
 
-See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm).
+## HT-02 (Rendimiento y Escalabilidad)
 
-## Get Started
+• Implementar el proceso de depuración mediante Batch Apex, permitiendo procesar las cotizaciones de forma masiva y controlada mediante lotes configurables los cuales se dejan dentro de una metadata. 
 
-Ready to start developing? The [Get Started with Salesforce DX](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_get_started_dx.htm) guide walks you through your first project, from creating a scratch org to creating a simple Apex class or LWC to deploying your code to a sandbox.
+• Se utilizará Database.QueryLocator para la consulta de grandes volúmenes de registros y operaciones DML masivas mediante Database.delete(records, false), evitando ejecuciones individuales que puedan afectar los Governor Limits de SOQL y DML.
 
-## Common Salesforce CLI Commands
+• La ejecución se realizará mediante Scheduled Apex, preferiblemente en ventanas de baja actividad, con el objetivo de minimizar la concurrencia con procesos de actualización de cotizaciones y reducir el riesgo de Row Locking.
 
-Here are common CLI commands that you'll use the most:
+• Adicionalmente, se controlará que no existan ejecuciones concurrentes del proceso de depuración y se registrarán los errores de eliminación mediante Audit_Log__c, permitiendo identificar los registros que no pudieron ser procesados.
 
-- `sf org login web`: Authorize an org
-- `sf org open`: Open your org in a browser
-- `sf org create scratch`: Create a scratch org
-- `sf project deploy start`: Deploy metadata to your org
-- `sf project retrieve start`: Retrieve metadata from your org
-- `sf template generate <artifact>`: Scaffold new components, such as Apex classes and triggers, LWC components, Lightning apps, and more
-- `sf apex <command>`: Run Apex tests, run anonymous Apex blocks, and view logs
-- `sf data <command>`: Work with test data
-- `sf alias <command>`: Manage org aliases
-- `sf config <command>`: Configure CLI settings
+## Declaración de Uso de IA y Gobernanza
+### Herramientas Utilizadas
+• Ejemplos de comandos
+• Refuerzo de clases test
+• mejora de ortografia 
+• Creacion de formulas para los flows
+### Refinamiento y Corrección Humana
+• Correcion en las formulas debido a fallas en tipos de datos
+• Cambio de metodos tipos de datos para las clases test
+• Corrección en la arquitectura del trigger 
+• Correcciones en codigo muy rigido 
 
-## Use Agentforce Vibes to Build Lightning Apps
-
-Transform your ideas into custom Lightning apps that extend CRM workflows directly in Lightning Experience. Through natural conversations with Agentforce Vibes, implement custom objects and fields, complex business logic, and dynamic UI components. See [Build a Lightning App Using Agentforce Vibes](https://developer.salesforce.com/docs/platform/einstein-for-devs/guide/lexapp-overview.html).
-
-## Additional Resources
-
-- [Agentforce Vibes Developer Guide](https://developer.salesforce.com/docs/platform/einstein-for-devs/guide/einstein-overview.html)
-- [Salesforce CLI Installation Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
-- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/)
-- [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/)
-- [Salesforce CLI Plugin Development Guide](https://developer.salesforce.com/docs/platform/salesforce-cli-plugin/guide/conceptual-overview.html)
-- [Salesforce VS Code Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
 
