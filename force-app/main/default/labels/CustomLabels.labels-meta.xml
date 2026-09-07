@@ -8,4 +8,11 @@
         <shortDescription>Audit_Log_update_status_quote</shortDescription>
         <value>Cambio de estado de cotización</value>
     </labels>
+    <labels>
+        <fullName>debuggingQuotes_batch</fullName>
+        <language>es</language>
+        <protected>true</protected>
+        <shortDescription>debuggingQuotes_batch</shortDescription>
+        <value>200</value>
+    </labels>
 </CustomLabels>
