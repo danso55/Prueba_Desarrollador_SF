@@ -1,7 +1,103 @@
+
 # Prueba Tecnica
 ## Authors
+
 - [@Daniel Jaimes](https://github.com/danso55)
+
+
+
+
+## Instrucciones 
+### 1. Autenticación de la Org
+
+• Desde la raíz del proyecto Salesforce, autenticar la Org de prueba:
+
+sf org login web --alias OrgPrueba
+
+• Validar posteriormente la conexión:
+
+sf org display --target-org OrgPrueba
+### 2. Carga de los componentes del repositorio
+
+Se realizará el despliegue de los componentes contenidos en el repositorio hacia la Org de prueba:
+
+sf project deploy start --source-dir force-app --target-org OrgPrueba
+
+Este proceso cargará los componentes incluidos en el proyecto:
+
+
+• Clases y pruebas Apex
+• Triggers
+• Objetos y campos
+• Custom Metadata
+• Flows
+• Permisos
+• Labels
+
+
+Se recomienda realizar previamente una validación sin aplicar cambios:
+
+sf project deploy start --source-dir force-app --target-org OrgPrueba --dry-run
+### 3. Activación de Flows
+
+Una vez desplegados los Flows, se deberá validar su estado y activar aquellos que hagan parte de la solución.
+
+Se debe verificar especialmente que:
+
+El Flow desplegado corresponda a la versión esperada.
+Se encuentre activo.
+Las condiciones de entrada sean correctas.
+Las referencias a campos, objetos y acciones sean válidas.
+No existan versiones anteriores activas que puedan generar ejecuciones duplicadas.
+### 4. Validación de permisos
+
+Después del despliegue se deberán validar los permisos necesarios para la correcta ejecución de la solución.
+
+Se debe verificar:
+
+Field-Level Security (FLS) de los campos utilizados
+Permisos de lectura, creación, edición y eliminación sobre los objetos involucrados
+Acceso a las clases Apex
+
+### 5. Validación de visibilidad de botones y acciones
+
+Se deberá comprobar que los botones, acciones y componentes utilizados por la solución sean visibles para los perfiles o usuarios correspondientes.
+
+La validación deberá contemplar:
+
+Visibilidad de botones y acciones en los Lightning Record Pages.
+Permisos necesarios para ejecutar las acciones.
+
+### 6. Creación del trabajo programado
+
+Finalmente, se deberá crear el trabajo programado encargado de ejecutar debuggingQuotes_sch.
+
+El Scheduler ejecutará diariamente el Batch Apex encargado de identificar y depurar las cotizaciones que cumplan las condiciones de retención configuradas.
+
+Se recomienda programarlo en un horario de baja utilización del sistema, con el objetivo de minimizar el impacto sobre los procesos concurrentes y reducir el riesgo de bloqueos por Row Locking.
+
+El tamaño del lote será tomado de la etiqueta:
+
+Label.debuggingQuotes_batch
+
+permitiendo ajustar el volumen de registros procesados por transacción sin modificar el código fuente.
+
+### 7. Validación final
+
+Una vez completado el despliegue y la configuración, se deberá validar:
+
+Correcta ejecución de los Flows.
+Acceso a los objetos y campos requeridos.
+Visibilidad de botones y acciones.
+Existencia y configuración del Custom Metadata Depuracion_Quotes.
+Configuración de los días de retención.
+Existencia del trabajo programado debuggingQuotes_sch.
+Ejecución correcta del Batch Apex.
+Generación de registros en Audit_Log__c ante errores o eventos definidos.
+Correcto procesamiento y eliminación de las Quotes que cumplan las condiciones establecidas.
+
 ## HT-01 (Gobernanza y Transiciones de Estado)
+
 ### Gestión de versiones
 • Responsable de identificar las diferentes versiones de una cotización.
 
@@ -43,5 +139,3 @@
 • Cambio de metodos tipos de datos para las clases test
 • Corrección en la arquitectura del trigger 
 • Correcciones en codigo muy rigido 
-
-
